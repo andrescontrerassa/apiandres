@@ -20,23 +20,7 @@ Controladores con endpoints REST bien documentados
 Soporte para MySQL con fallback a SQLite
 
 Documentación detallada para facilitar la comprensión y extensión
-
-🏗 Estructura del Proyecto
-text
-trabajoandres/
-├── app.py                
-├── .env                  
-├── config/
-│   └── database.py      
-├── models/
-│   └── game_model.py     
-├── repositories/
-│   └── game_repository.py 
-├── services/
-│   └── game_service.py   
-├── controllers/
-│   └── game_controller.py 
-└── requirements.txt       
+  
  Instalación y Configuración
 1. Clonar o crear el proyecto
 bash
