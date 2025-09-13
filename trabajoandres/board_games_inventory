@@ -1,0 +1,93 @@
+-- Crear la base de datos
+CREATE DATABASE IF NOT EXISTS board_games_inventory 
+CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci;
+
+-- Usar la base de datos
+USE board_games_inventory;
+
+-- Tabla de categorías
+CREATE TABLE IF NOT EXISTS categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Tabla de editoriales
+CREATE TABLE IF NOT EXISTS publishers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    website VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Tabla de juegos
+CREATE TABLE IF NOT EXISTS games (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,
+    stock_quantity INT DEFAULT 0,
+    category_id INT,
+    publisher_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
+    FOREIGN KEY (publisher_id) REFERENCES publishers(id) ON DELETE SET NULL,
+    INDEX idx_title (title),
+    INDEX idx_category (category_id),
+    INDEX idx_publisher (publisher_id)
+);
+
+-- Insertar datos de ejemplo en categorías
+INSERT INTO categories (name, description) VALUES
+('Estrategia', 'Juegos que requieren planificación y toma de decisiones tácticas'),
+('Familiar', 'Juegos adecuados para todas las edades y grupos familiares'),
+('Party', 'Juegos divertidos para grupos grandes y fiestas'),
+('Cooperativo', 'Juegos donde los jugadores trabajan juntos para lograr un objetivo común'),
+('Eurogame', 'Juegos con mecánicas de estrategia y gestión de recursos'),
+('Cartas', 'Juegos que utilizan principalmente cartas como mecanismo principal');
+
+-- Insertar datos de ejemplo en editoriales
+INSERT INTO publishers (name, website) VALUES
+('Devir', 'https://www.devir.es'),
+('Edge Entertainment', 'https://www.edge-ent.com'),
+('Maldito Games', 'https://malditogames.com'),
+('Asmodee', 'https://www.asmodee.com'),
+('Matagot', 'https://www.matagot.com');
+
+-- Insertar datos de ejemplo en juegos
+INSERT INTO games (title, description, price, stock_quantity, category_id, publisher_id) VALUES
+('Catan', 'Juego de estrategia y comercio donde los jugadores compiten para colonizar la isla de Catan', 45.99, 15, 1, 1),
+('Ticket to Ride', 'Juego de construir rutas de tren a través de Norteamérica', 49.95, 12, 1, 4),
+('Carcassonne', 'Juego de colocar losetas y meeples para construir ciudades, caminos y campos', 39.99, 18, 1, 1),
+('Dixit', 'Juego de imaginación y creatividad donde los jugadores adivinan cartas basadas en pistas', 34.95, 20, 3, 2),
+('Pandemic', 'Juego cooperativo donde los jugadores trabajan juntos para detener enfermedades globales', 54.99, 8, 4, 4),
+('7 Wonders', 'Juego de cartas de drafting donde los jugadores construyen maravillas del mundo antiguo', 59.99, 10, 1, 5),
+('Código Secreto', 'Juego de deducción donde los equipos compiten para encontrar a todos sus agentes', 29.95, 22, 3, 3),
+('Azul', 'Juego abstracto de colocación de losetas inspirado en los azulejos portugueses', 42.50, 14, 1, 1);
+
+-- Verificar que todo se creó correctamente
+SELECT '=== TABLAS CREADAS ===' AS Status;
+SHOW TABLES;
+
+SELECT '=== CATEGORÍAS ===' AS Status;
+SELECT * FROM categories;
+
+SELECT '=== EDITORIALES ===' AS Status;
+SELECT * FROM publishers;
+
+SELECT '=== JUEGOS ===' AS Status;
+SELECT 
+    g.id, 
+    g.title, 
+    g.price, 
+    g.stock_quantity,
+    c.name as category,
+    p.name as publisher
+FROM games g
+LEFT JOIN categories c ON g.category_id = c.id
+LEFT JOIN publishers p ON g.publisher_id = p.id;
